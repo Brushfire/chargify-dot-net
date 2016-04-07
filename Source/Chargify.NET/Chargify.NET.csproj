@@ -82,6 +82,8 @@
   <ItemGroup>
     <Compile Include="Adjustment.cs" />
     <Compile Include="BillingManagementInfo.cs" />
+    <Compile Include="LineItem.cs" />
+    <Compile Include="BillingManifest.cs" />
     <Compile Include="Charge.cs" />
     <Compile Include="ChargifyBase.cs" />
     <Compile Include="ChargifyConnect.cs" />
@@ -101,12 +103,16 @@
     <Compile Include="Credit.cs" />
     <Compile Include="CreditCardAttributes.cs" />
     <Compile Include="HttpRequestMethod.cs" />
+    <Compile Include="Interfaces\IBillingManifest.cs" />
+    <Compile Include="Interfaces\ILineItem.cs" />
     <Compile Include="Interfaces\IMetadata.cs" />
     <Compile Include="Interfaces\IMetadataResult.cs" />
     <Compile Include="Interfaces\IPublicSignupPage.cs" />
     <Compile Include="Interfaces\IPayment.cs" />
     <Compile Include="Interfaces\ISubscriptionCreateOptions.cs" />
     <Compile Include="Interfaces\ISubscriptionOverride.cs" />
+    <Compile Include="Interfaces\ISubscriptionPreview.cs" />
+    <Compile Include="Interfaces\ITaxation.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="MetadataResult.cs" />
     <Compile Include="Payment.cs" />
@@ -168,6 +174,7 @@
     <Compile Include="Subscription.cs" />
     <Compile Include="SubscriptionOverride.cs" />
     <Compile Include="SubscriptionPostbackHandler.cs" />
+    <Compile Include="SubscriptionPreview.cs" />
     <Compile Include="Transaction.cs" />
     <Compile Include="Usage.cs" />
     <Compile Include="UsefulExtensions.cs" />

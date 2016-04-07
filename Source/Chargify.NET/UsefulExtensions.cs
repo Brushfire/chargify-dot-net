@@ -740,7 +740,6 @@
             }
             return result;
         }
-
         /// <summary>
         /// Method for getting the content of an XmlNode as a Product
         /// </summary>
@@ -1269,6 +1268,105 @@
                 result = (IntervalUnit)Enum.Parse(typeof(IntervalUnit), node.FirstChild.Value, true);
             }
             return result;
+        }
+        
+        /// <summary>
+        /// Gets the json content as result.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="obj">The object.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="resultGenerator">The result generator.</param>
+        /// <returns></returns>
+        public static TResult GetJSONContentAsResult<TResult>(this JsonObject obj, string key, Func<JsonObject, TResult> resultGenerator) where TResult : class
+        {
+            TResult result = null;
+            if (obj != null)
+            {
+                if (obj.ContainsKey(key))
+                {
+                    JsonObject childObject = obj[key] as JsonObject;
+                    if (childObject != null)
+                    {
+                        result = resultGenerator(childObject);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the node content as result.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="node">The node.</param>
+        /// <param name="resultGenerator">The result generator.</param>
+        /// <returns></returns>
+        public static TResult GetNodeContentAsResult<TResult>(this XmlNode node, Func<XmlNode, TResult> resultGenerator) where TResult : class
+        {
+            TResult result = null;
+            if (node.FirstChild != null)
+            {
+                result = resultGenerator(node);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets the node content as results.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="node">The node.</param>
+        /// <param name="childNodeName">Name of the child node.</param>
+        /// <param name="resultGenerator">The result generator.</param>
+        /// <returns></returns>
+        public static List<TResult> GetNodeContentAsResults<TResult>(this XmlNode node, string childNodeName, Func<XmlNode, TResult> resultGenerator) where TResult : class
+        {
+            var results = new List<TResult>();
+            foreach (XmlNode childNode in node.ChildNodes)
+            {
+                if (childNode.Name == childNodeName)
+                {
+                    results.Add(childNode.GetNodeContentAsResult(resultGenerator));
+                }
+            }
+            // Sanity check, should be equal.
+            if (node.ChildNodes.Count != results.Count)
+            {
+                throw new XmlException(string.Format("Unable to parse node list content ({0} != {1})", node.ChildNodes.Count, results.Count));
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Gets the json content as results.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="obj">The object.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="resultGenerator">The result generator.</param>
+        /// <returns></returns>
+        public static List<TResult> GetJSONContentAsResults<TResult>(this JsonObject obj, string key, Func<JsonObject, TResult> resultGenerator) where TResult : class
+        {
+            var results = new List<TResult>();
+            var jsonArray = obj[key] as JsonArray;
+            if (jsonArray != null)
+            {
+                foreach (JsonObject arrayItem in jsonArray.Items)
+                {
+                    results.Add(resultGenerator(arrayItem));
+                }
+            }
+            // Sanity check, should be equal.
+            if (jsonArray.Length != results.Count)
+            {
+                throw new JsonParseException(string.Format("Unable to parse JSON list content ({0} != {1})", jsonArray.Length, results.Count));
+            }
+
+            return results;
         }
 
         #endregion

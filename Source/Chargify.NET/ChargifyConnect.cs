@@ -1147,6 +1147,64 @@ namespace ChargifyNET
         }
         #endregion
 
+        #region Subscription Preview
+
+        /// <summary>
+        /// Create a subscription preview.
+        /// </summary>
+        /// <param name="options">The input options for creating a subscription</param>
+        /// <returns>The subscription preview</returns>
+        public ISubscriptionPreview CreateSubscriptionPreview(ISubscriptionCreateOptions options)
+        {
+            // TODO: implement this method
+            if (options == null) throw new ArgumentNullException("options");
+
+            //// Customer
+            //var customerSpecifiedAlready = false;
+            //if (options.CustomerID.HasValue && !customerSpecifiedAlready)
+            //{
+            //    customerSpecifiedAlready = true;
+            //}
+            //if (!string.IsNullOrEmpty(options.CustomerReference))
+            //{
+            //    if (customerSpecifiedAlready == true) { throw new ArgumentException("Customer information should only be specified once", "options"); }
+            //    else { customerSpecifiedAlready = true; }
+            //}
+            //if (options.CustomerAttributes != null)
+            //{
+            //    if (customerSpecifiedAlready == true) throw new ArgumentException("Customer information should only be specified once", "options");
+            //    else { customerSpecifiedAlready = true; }
+            //}
+            //if (!customerSpecifiedAlready) { throw new ArgumentException("No customer information was specified. Please specify either the CustomerID, CustomerReference or CustomerAttributes and try again.", "options"); }
+
+            //// Product
+            //var productSpecifiedAlready = false;
+            //if (options.ProductID.HasValue && !productSpecifiedAlready) productSpecifiedAlready = true;
+            //if (!string.IsNullOrEmpty(options.ProductHandle))
+            //{
+            //    if (productSpecifiedAlready == true) { throw new ArgumentException("Product information should only be specified once", "options"); }
+            //    else { productSpecifiedAlready = true; }
+            //}
+            //if (!productSpecifiedAlready) { throw new ArgumentException("No product information was specified. Please specify either the ProductID or ProductHandle and try again.", "options"); }
+
+            //var subscriptionXml = new StringBuilder();
+            //var serializer = new System.Xml.Serialization.XmlSerializer(options.GetType());
+            //using (StringWriter textWriter = new Utf8StringWriter())
+            //{
+            //    serializer.Serialize(textWriter, options);
+            //    subscriptionXml.Append(textWriter.ToString());
+            //}
+
+            //// now make the request
+            //string response = this.DoRequest(string.Format("subscriptions.{0}", GetMethodExtension()), HttpRequestMethod.Post, subscriptionXml.ToString());
+            //// change the response to the object
+            //return response.ConvertResponseTo<Subscription>("subscription");
+
+            return null;
+        }
+
+        #endregion
+
         #region Subscriptions
 
         /// <summary>

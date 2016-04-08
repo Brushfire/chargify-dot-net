@@ -12,27 +12,32 @@ namespace ChargifyNET
     {
         /// <summary>
         /// The tax rate.
-        /// </value>
+        /// </summary>
         string Rate { get; }
 
         /// <summary>
         /// An integer representing the tax amount.
-        /// </value>
+        /// </summary>
         int TaxAmountInCents { get; }
 
         /// <summary>
-        /// The tax ID.
+        /// A decimal representing the taxed amount.
         /// </value>
+        decimal TaxAmount { get; }
+
+        /// <summary>
+        /// The tax ID.
+        /// </summary>
         string TaxId { get; }
 
         /// <summary>
         /// The name of the tax.
-        /// </value>
+        /// </summary>
         string TaxName { get; }
 
         /// <summary>
         /// A list of tax rules.
-        /// </value>
+        /// </summary>
         List<string> TaxRules { get; }
     }
 }

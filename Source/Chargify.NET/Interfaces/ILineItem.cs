@@ -16,9 +16,19 @@ namespace ChargifyNET
         int AmountInCents { get; }
 
         /// <summary>
+        /// A decimal representing the line item's amount.
+        /// </value>
+        decimal Amount { get; }
+
+        /// <summary>
         /// An integer representing the discount aount.
         /// </summary>
         int DiscountAmountInCents { get; }
+
+        /// <summary>
+        /// A decimal representing the line item's discount amount.
+        /// </summary>
+        decimal DiscountAmount { get; }
 
         /// <summary>
         /// The kind of transaction charge.
@@ -34,6 +44,11 @@ namespace ChargifyNET
         /// An integer representing the taxable amount of the line item.
         /// </summary>
         int TaxableAmountInCents { get; }
+
+        /// <summary>
+        /// A decimal representing the line item's taxable amount.
+        /// </summary>
+        decimal TaxableAmount { get; }
 
         /// <summary>
         /// A list of taxations.

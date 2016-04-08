@@ -27,47 +27,72 @@ namespace ChargifyNET
     {
         /// <summary>
         /// The timestamp for the beginning of the period covered by the manifest.
-        /// </value>
+        /// </summary>
         DateTime StartDate { get; }
 
         /// <summary>
         /// The timestamp for the end of the period covered by the manifest.
-        /// </value>
+        /// </summary>
         DateTime EndDate { get; }
 
         /// <summary>
         /// The type of billing period: recurring for previews.
-        /// </value>
+        /// </summary>
         PeriodType PeriodType { get; }
 
         /// <summary>
         /// An integer representing the amount of the subscription’s current balance. Will be zero since the subscription does not yet exist.
-        /// </value>
+        /// </summary>
         int ExistingBalanceInCents { get; }
 
         /// <summary>
+        /// A decimal representing the subscription's existing balance.
+        /// </summary>
+        decimal ExistingBalance { get; }
+
+        /// <summary>
         /// An integer representing the amount of the total pre-tax, pre-discount charges that would be assessed.
-        /// </value>
+        /// </summary>
         int SubtotalInCents { get; }
 
         /// <summary>
+        /// A decimal representing the subscription's subtotal.
+        /// </summary>
+        decimal Subtotal { get; }
+
+        /// <summary>
         /// An integer representing the amount of the coupon discounts that would be applied.
-        /// </value>
+        /// </summary>
         int TotalDiscountInCents { get; }
 
         /// <summary>
+        /// A decimal representing the subscription's total discount.
+        /// </summary>
+        decimal TotalDiscount { get; }
+
+        /// <summary>
         /// An integer representing the total tax charges that would be assessed.
-        /// </value>
+        /// </summary>
         int TotalTaxInCents { get; }
 
         /// <summary>
+        /// A decimal representing the subscription's total tax.
+        /// </summary>
+        decimal TotalTax { get; }
+
+        /// <summary>
         /// An integer representing the total amount owed, less any discounts, that would be assessed.
-        /// </value>
+        /// </summary>
         int TotalInCents { get; }
 
         /// <summary>
+        /// A decimal representing the subscription's total.
+        /// </summary>
+        decimal Total { get; }
+
+        /// <summary>
         /// An array of objects representing the individual transactions that would be created for this subscription.
-        /// </value>
+        /// </summary>
         List<ILineItem> LineItems { get; }
     }
 }

@@ -82,6 +82,8 @@
   <ItemGroup>
     <Compile Include="Adjustment.cs" />
     <Compile Include="BillingManagementInfo.cs" />
+    <Compile Include="Json\SnakeCaseContractResolver.cs" />
+    <Compile Include="Taxation.cs" />
     <Compile Include="LineItem.cs" />
     <Compile Include="BillingManifest.cs" />
     <Compile Include="Charge.cs" />

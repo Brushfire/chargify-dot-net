@@ -29,9 +29,13 @@
 
 namespace ChargifyNET
 {
+    using Newtonsoft.Json;
     #region Imports
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.Xml;
+    using System.Xml.Schema;
     using System.Xml.Serialization;
     #endregion
 
@@ -151,11 +155,55 @@ namespace ChargifyNET
         /// <summary>
         /// The list of components to set when creating the subscription
         /// </summary>
-        List<ComponentDetails> Components { get; set; }
+        ComponentCollection Components { get; set; }
 
         // TODO: Add this
         //Dictionary<string, string> Metafields { get; set; }
+    }
+    
+    [Serializable]
+    public class ComponentCollection : List<ComponentDetails>, IXmlSerializable
+    {
+        /// <summary>
+        /// This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute" /> to the class.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Xml.Schema.XmlSchema" /> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)" /> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)" /> method.
+        /// </returns>
+        public XmlSchema GetSchema()
+        {
+            return null;
+        }
 
+        /// <summary>
+        /// Generates an object from its XML representation.
+        /// </summary>
+        /// <param name="reader">The <see cref="T:System.Xml.XmlReader" /> stream from which the object is deserialized.</param>
+        public void ReadXml(XmlReader reader)
+        {
+            reader.MoveToAttribute("type");
+            var serializer = new XmlSerializer(typeof(ComponentDetails));
+            while (reader.Read())
+            {
+                var item = (ComponentDetails)serializer.Deserialize(reader);
+                this.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Converts an object into its XML representation.
+        /// </summary>
+        /// <param name="writer">The <see cref="T:System.Xml.XmlWriter" /> stream to which the object is serialized.</param>
+        public void WriteXml(XmlWriter writer)
+        {
+            writer.WriteAttributeString("type", "array");
+
+            var serializer = new XmlSerializer(typeof(ComponentDetails));
+            foreach (var item in this)
+            {
+                serializer.Serialize(writer, item);
+            }
+        }
     }
 
     [XmlType("component")]
@@ -231,21 +279,21 @@ namespace ChargifyNET
         }
     }
 
-    [XmlType("subscription")]
+    [XmlType("subscription")]  
     [Serializable]
     public class SubscriptionCreateOptions: ISubscriptionCreateOptions
     {
         /// <summary>
         /// The list of components to set when creating the subscription
         /// </summary>
-        [XmlArray("components")]
-        public List<ComponentDetails> Components { get; set; }
+        [XmlElement(ElementName = "components")]
+        public ComponentCollection Components { get; set; }
         /// <summary>
         /// Ignore, used to determine if the field should be serialized
         /// </summary>
         public bool ShouldSerializeComponents()
         {
-            return Components != null && Components.Count > 0;
+            return Components != null && Components.Count != 0;
         }
 
         /// <summary>

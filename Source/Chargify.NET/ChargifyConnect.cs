@@ -39,6 +39,9 @@ namespace ChargifyNET
     using System.Web;
     using System.Xml;
     using System.Globalization;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
+    using System.Dynamic;
     #endregion
 
     /// <summary>
@@ -1156,51 +1159,25 @@ namespace ChargifyNET
         /// <returns>The subscription preview</returns>
         public ISubscriptionPreview CreateSubscriptionPreview(ISubscriptionCreateOptions options)
         {
-            // TODO: implement this method
             if (options == null) throw new ArgumentNullException("options");
+            
+            // Product
+            var productSpecifiedAlready = false;
+            if (options.ProductID.HasValue && !productSpecifiedAlready) productSpecifiedAlready = true;
+            if (!string.IsNullOrEmpty(options.ProductHandle))
+            {
+                if (productSpecifiedAlready == true) { throw new ArgumentException("Product information should only be specified once", "options"); }
+                else { productSpecifiedAlready = true; }
+            }
+            if (!productSpecifiedAlready) { throw new ArgumentException("No product information was specified. Please specify either the ProductID or ProductHandle and try again.", "options"); }
 
-            //// Customer
-            //var customerSpecifiedAlready = false;
-            //if (options.CustomerID.HasValue && !customerSpecifiedAlready)
-            //{
-            //    customerSpecifiedAlready = true;
-            //}
-            //if (!string.IsNullOrEmpty(options.CustomerReference))
-            //{
-            //    if (customerSpecifiedAlready == true) { throw new ArgumentException("Customer information should only be specified once", "options"); }
-            //    else { customerSpecifiedAlready = true; }
-            //}
-            //if (options.CustomerAttributes != null)
-            //{
-            //    if (customerSpecifiedAlready == true) throw new ArgumentException("Customer information should only be specified once", "options");
-            //    else { customerSpecifiedAlready = true; }
-            //}
-            //if (!customerSpecifiedAlready) { throw new ArgumentException("No customer information was specified. Please specify either the CustomerID, CustomerReference or CustomerAttributes and try again.", "options"); }
+            string response = this.SendRequest(
+                string.Format("subscriptions/preview.{0}", GetMethodExtension()),
+                HttpRequestMethod.Post,
+                () => this.GetSerializedPostData("subscription", options));
 
-            //// Product
-            //var productSpecifiedAlready = false;
-            //if (options.ProductID.HasValue && !productSpecifiedAlready) productSpecifiedAlready = true;
-            //if (!string.IsNullOrEmpty(options.ProductHandle))
-            //{
-            //    if (productSpecifiedAlready == true) { throw new ArgumentException("Product information should only be specified once", "options"); }
-            //    else { productSpecifiedAlready = true; }
-            //}
-            //if (!productSpecifiedAlready) { throw new ArgumentException("No product information was specified. Please specify either the ProductID or ProductHandle and try again.", "options"); }
-
-            //var subscriptionXml = new StringBuilder();
-            //var serializer = new System.Xml.Serialization.XmlSerializer(options.GetType());
-            //using (StringWriter textWriter = new Utf8StringWriter())
-            //{
-            //    serializer.Serialize(textWriter, options);
-            //    subscriptionXml.Append(textWriter.ToString());
-            //}
-
-            //// now make the request
-            //string response = this.DoRequest(string.Format("subscriptions.{0}", GetMethodExtension()), HttpRequestMethod.Post, subscriptionXml.ToString());
-            //// change the response to the object
-            //return response.ConvertResponseTo<Subscription>("subscription");
-
-            return null;
+            // change the response to the object
+            return response.ConvertResponseTo<SubscriptionPreview>("subscription_preview");
         }
 
         #endregion
@@ -5542,7 +5519,7 @@ namespace ChargifyNET
                     {
                         XmlDocument doc = new XmlDocument();
                         doc.LoadXml(postData);
-                        dataToPost = XmlToJsonConverter.XmlToJSON(doc);
+                        dataToPost = doc.ToJson(); // XmlToJsonConverter.XmlToJSON(doc);
                     }
 
                     // Wrap the request stream with a text-based writer
@@ -5622,6 +5599,187 @@ namespace ChargifyNET
                 }
             }
         }
+
+        /// <summary>
+        /// Gets the post data by serializing the specified object.
+        /// </summary>
+        /// <param name="objectToSerialize">The object to serialize.</param>
+        /// <returns></returns>
+        private string GetSerializedPostData(string root, object objectToSerialize)
+        {
+            if (this.UseJSON)
+            {
+                string rootFormat = "{{\"{0}\": {1} }}";
+                string jsonPostData = JsonConvert.SerializeObject(
+                    objectToSerialize,
+                    new JsonSerializerSettings()
+                    {
+                        ContractResolver = new SnakeCaseContractResolver(),
+                        Converters = new List<JsonConverter>
+                          {
+                              new StringEnumConverter
+                              {
+                                  CamelCaseText = true
+                              }
+                          }
+                    });
+                return string.Format(rootFormat, root, jsonPostData);
+            }
+            else
+            {
+
+                var xmlPostData = new StringBuilder();
+                var serializer = new System.Xml.Serialization.XmlSerializer(
+                    objectToSerialize.GetType(), 
+                    new System.Xml.Serialization.XmlRootAttribute(root));
+                using (StringWriter textWriter = new Utf8StringWriter())
+                {
+                    serializer.Serialize(textWriter, objectToSerialize);
+                    xmlPostData.Append(textWriter.ToString());
+                }
+
+                return xmlPostData.ToString();
+            }
+        }
+
+        private string SendRequest(
+            string methodString, 
+            HttpRequestMethod requestMethod, 
+            Func<string> getPostData)
+
+        {
+            // make sure values are set
+            if (string.IsNullOrEmpty(this.URL)) throw new InvalidOperationException("URL not set");
+            if (string.IsNullOrEmpty(this.apiKey)) throw new InvalidOperationException("apiKey not set");
+            if (string.IsNullOrEmpty(this.Password)) throw new InvalidOperationException("Password not set");
+
+            if (_protocolType != null)
+            {
+                ServicePointManager.SecurityProtocol = _protocolType.Value;
+            }
+
+            // create the URI
+            string addressString = string.Format("{0}{1}{2}", this.URL, (this.URL.EndsWith("/") ? string.Empty : "/"), methodString);
+
+            var uriBuilder = new UriBuilder(addressString)
+            {
+                Scheme = Uri.UriSchemeHttps,
+                Port = -1 // default port for scheme
+            };
+            Uri address = uriBuilder.Uri;
+
+            // Create the web request
+            HttpWebRequest request = WebRequest.Create(address) as HttpWebRequest;
+            request.Timeout = this._timeout;
+            string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(this.apiKey + ":" + this.Password));
+            request.Headers[HttpRequestHeader.Authorization] = "Basic " + credentials;
+            request.UserAgent = UserAgent;
+            request.SendChunked = false;
+
+            // Set Content-Type and Accept headers
+            request.Method = requestMethod.ToString().ToUpper();
+            if (!this.UseJSON)
+            {
+                request.ContentType = "text/xml";
+                request.Accept = "application/xml";
+            }
+            else
+            {
+                request.ContentType = "application/json";
+                request.Accept = "application/json";
+            }
+
+            // Send the data (when applicable)
+            string postData = null;
+            if (requestMethod == HttpRequestMethod.Post || requestMethod == HttpRequestMethod.Put || requestMethod == HttpRequestMethod.Delete)
+            {
+                if (getPostData != null)
+                {
+                    postData = getPostData();
+                }
+
+                bool hasWritten = false;
+                // only write if there's data to write ...
+                if (!string.IsNullOrEmpty(postData))
+                {
+                    // Wrap the request stream with a text-based writer
+                    using (StreamWriter writer = new StreamWriter(request.GetRequestStream()))
+                    {
+                        // Write the XML/JSON text into the stream
+                        writer.WriteLine(postData);
+                        writer.Close();
+                        hasWritten = true;
+                    }
+                }
+
+                if (!hasWritten && !string.IsNullOrEmpty(postData))
+                {
+                    request.ContentLength = postData.Length;
+                }
+                else if (!hasWritten && string.IsNullOrEmpty(postData))
+                {
+                    request.ContentLength = (postData != null) ? postData.Length : 0;
+                }
+            }
+            // request the data
+            try
+            {
+                if (LogRequest != null)
+                {
+                    LogRequest(requestMethod, addressString, postData);
+                }
+
+                string retValue = string.Empty;
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        retValue = reader.ReadToEnd();
+                        _lastResponse = response;
+                    }
+
+                    if (LogResponse != null)
+                    {
+                        LogResponse(response.StatusCode, addressString, retValue);
+                    }
+                }
+                // return the result
+                return retValue;
+            }
+            catch (WebException wex)
+            {
+                Exception newException = null;
+                // build exception and set last response
+                if (wex.Response != null)
+                {
+                    using (HttpWebResponse errorResponse = (HttpWebResponse)wex.Response)
+                    {
+                        newException = new ChargifyException(errorResponse, wex, postData);
+                        _lastResponse = errorResponse;
+
+                        if (LogResponse != null)
+                        {
+                            // Use the ChargifyException ToString override to provide the parsed errors
+                            LogResponse(errorResponse.StatusCode, addressString, newException.ToString());
+                        }
+                    }
+                }
+                else
+                {
+                    _lastResponse = null;
+                }
+                // throw the approriate exception
+                if (newException != null)
+                {
+                    throw newException;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+    
         #endregion
     }
 }

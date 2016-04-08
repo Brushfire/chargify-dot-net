@@ -113,7 +113,7 @@ namespace ChargifyNET
                         _totalInCents = billingManifestObject.GetJSONContentAsInt(key);
                         break;
                     case LineItemsKey:
-                        _lineItems = billingManifestObject.GetJSONContentAsResults<ILineItem>(key, x => null);
+                        _lineItems = billingManifestObject.GetJSONContentAsResults<ILineItem>(key, x => new LineItem(x));
                         break;
                     default:
                         break;
@@ -156,7 +156,7 @@ namespace ChargifyNET
                         _totalInCents = dataNode.GetNodeContentAsInt();
                         break;
                     case LineItemsKey:
-                        _lineItems = dataNode.GetNodeContentAsResults<ILineItem>("line_item", x => null);
+                        _lineItems = dataNode.GetNodeContentAsResults<ILineItem>("line_item", x => new LineItem(x));
                         break;
                     default:
                         break;

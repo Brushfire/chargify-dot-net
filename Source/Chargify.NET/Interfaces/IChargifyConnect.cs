@@ -425,7 +425,7 @@ namespace ChargifyNET
         bool DeleteCustomer(string SystemID);
         #endregion
 
-        #region
+        #region Subscription Preview
         /// <summary>
         /// Create a subscription preview.
         /// </summary>
@@ -434,6 +434,17 @@ namespace ChargifyNET
         /// The subscription preview
         /// </returns>
         ISubscriptionPreview CreateSubscriptionPreview(ISubscriptionCreateOptions options);
+        #endregion
+
+        #region Renewal Preview
+
+        /// <summary>
+        /// Create a renewal preview.
+        /// </summary>
+        /// <param name="options">The input options for creating a renewal</param>
+        /// <returns>The subscription preview</returns>
+        IRenewalPreview CreateRenewalPreview(int SubscriptionID);
+
         #endregion
 
         #region Subscriptions

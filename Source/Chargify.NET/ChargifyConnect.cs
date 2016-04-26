@@ -1182,6 +1182,26 @@ namespace ChargifyNET
 
         #endregion
 
+        #region Renewal Preview
+
+        /// <summary>
+        /// Create a renewal preview.
+        /// </summary>
+        /// <param name="options">The input options for creating a renewal</param>
+        /// <returns>The subscription preview</returns>
+        public IRenewalPreview CreateRenewalPreview(int SubscriptionID)
+        {
+            string response = this.SendRequest(
+                string.Format("subscriptions/{0}/renewals/preview.{1}", SubscriptionID, GetMethodExtension()),
+                HttpRequestMethod.Post,
+                null);
+
+            // change the response to the object
+            return response.ConvertResponseTo<RenewalPreview>("renewal_preview");
+        }
+
+        #endregion
+
         #region Subscriptions
 
         /// <summary>
@@ -4629,7 +4649,7 @@ namespace ChargifyNET
         }
 
         #endregion
-
+        
         #region Refunds
         /// <summary>
         /// Create a refund

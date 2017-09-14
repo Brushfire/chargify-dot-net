@@ -3126,6 +3126,28 @@ namespace ChargifyNET
             }
         }
 
+        public ISubscription UpdateSubscriptionExpiresAt(int SubscriptionID, DateTime ExpiresAt)
+        {
+            // create XML for updating
+            StringBuilder SubscriptionXML = new StringBuilder(GetXMLStringIfApplicable());
+            SubscriptionXML.Append("<subscription>");
+            SubscriptionXML.AppendFormat("<expires_at>{0}</expires_at>", ExpiresAt.ToString("o"));
+            SubscriptionXML.Append("</subscription>");
+
+            try
+            {
+                // now make the request
+                string response = this.DoRequest(string.Format("subscriptions/{0}.{1}", SubscriptionID, GetMethodExtension()), HttpRequestMethod.Put, SubscriptionXML.ToString());
+                // change the response to the object
+                return response.ConvertResponseTo<Subscription>("subscription");
+            }
+            catch (ChargifyException cex)
+            {
+                if (cex.StatusCode == HttpStatusCode.NotFound) throw new InvalidOperationException("Subscription not found");
+                throw;
+            }
+        }
+
         /// <summary>
         /// Update a subscription changing customer, product and credit card information at the same time
         /// </summary>

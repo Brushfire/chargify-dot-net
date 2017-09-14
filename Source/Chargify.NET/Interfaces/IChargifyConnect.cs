@@ -1166,6 +1166,15 @@ namespace ChargifyNET
         /// <param name="BillingCountry">The billing country (optional - set to null if not required)</param>
         /// <returns>The new subscription resulting from the change</returns>
         ISubscription UpdateSubscriptionCreditCard(int SubscriptionID, string FirstName, string LastName, string FullNumber, int? ExpirationMonth, int? ExpirationYear, string CVV, string BillingAddress, string BillingCity, string BillingState, string BillingZip, string BillingCountry);
+
+        /// <summary>
+        /// Updates the subscription expires at.
+        /// </summary>
+        /// <param name="SubscriptionID">The ID of the suscription to update</param>
+        /// <param name="ExpiresAt"></param>
+        /// <returns></returns>
+        ISubscription UpdateSubscriptionExpiresAt(int SubscriptionID, DateTime ExpiresAt);
+
         /// <summary>
         /// Update the specified chargify subscription
         /// </summary>

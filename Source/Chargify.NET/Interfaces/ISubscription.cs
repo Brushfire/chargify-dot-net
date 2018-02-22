@@ -112,6 +112,10 @@ namespace ChargifyNET
         /// </summary>
         Partial,
         /// <summary>
+        /// Subscription is 'paused', no further processing
+        /// </summary>
+        On_Hold,
+        /// <summary>
         /// The 'unknown' subscription state, only internal to this wrapper
         /// </summary>
         Unknown = -1

@@ -305,7 +305,7 @@ namespace ChargifyDotNetTests
                     var resetResult = Chargify.ResetSubscriptionBalance(subscription.SubscriptionID);
 
                 }
-                var cancelledResult = Chargify.DeleteSubscription(subscription.SubscriptionID, "");
+                var cancelledResult = Chargify.DeleteSubscription(subscription.SubscriptionID, "", "");
                 var reactivateResult = Chargify.ReactivateSubscription(subscription.SubscriptionID);
 
                 // Assert
@@ -326,7 +326,7 @@ namespace ChargifyDotNetTests
             var newPaymentInfo = GetTestPaymentMethod(newCustomer);
             var createdSubscription = Chargify.CreateSubscription(trialingProduct.Handle, newCustomer, newPaymentInfo);
             Assert.IsNotNull(createdSubscription);
-            var deletedSubscription = Chargify.DeleteSubscription(createdSubscription.SubscriptionID, "Delete for test Subscription_Can_Reactivate_With_Trial");
+            var deletedSubscription = Chargify.DeleteSubscription(createdSubscription.SubscriptionID, "Delete for test Subscription_Can_Reactivate_With_Trial", "");
             Assert.IsNotNull(deletedSubscription);
             var foundSubscription = Chargify.Find<Subscription>(createdSubscription.SubscriptionID);
             Assert.IsTrue(foundSubscription.State == SubscriptionState.Canceled, "Expected cancelled subscription on a trial product");
@@ -355,7 +355,7 @@ namespace ChargifyDotNetTests
             var newPaymentInfo = GetTestPaymentMethod(newCustomer);
             var createdSubscription = Chargify.CreateSubscription(trialingProduct.Handle, newCustomer, newPaymentInfo);
             Assert.IsNotNull(createdSubscription);
-            var deletedSubscription = Chargify.DeleteSubscription(createdSubscription.SubscriptionID, "Delete for test Subscription_Can_Reactivate_With_Trial");
+            var deletedSubscription = Chargify.DeleteSubscription(createdSubscription.SubscriptionID, "Delete for test Subscription_Can_Reactivate_With_Trial", "");
             Assert.IsNotNull(deletedSubscription);
             var foundSubscription = Chargify.Find<Subscription>(createdSubscription.SubscriptionID);
             Assert.IsTrue(foundSubscription.State == SubscriptionState.Canceled, "Expected cancelled subscription on a trial product");
@@ -385,7 +385,7 @@ namespace ChargifyDotNetTests
 
             // Act
             var newSubscription = Chargify.CreateSubscription(product.Handle, newCustomer, newPaymentInfo);
-            var result = Chargify.DeleteSubscription(newSubscription.SubscriptionID, "testing");
+            var result = Chargify.DeleteSubscription(newSubscription.SubscriptionID, "testing", "");
             var foundSubscription = Chargify.Find<Subscription>(newSubscription.SubscriptionID);
             var resultSubscription = Chargify.ReactivateSubscription(foundSubscription.SubscriptionID);
 
@@ -445,7 +445,7 @@ namespace ChargifyDotNetTests
             Assert.IsTrue(newSubscription.PaymentProfile.BillingZip == newPaymentInfo.BillingZip);
 
             // Cleanup
-            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test"));
+            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test", ""));
         }
 
         [Test]
@@ -506,7 +506,7 @@ namespace ChargifyDotNetTests
             }
 
             // Cleanup
-            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test"));
+            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test", ""));
         }
 
         [Test]
@@ -557,7 +557,7 @@ namespace ChargifyDotNetTests
             Assert.IsTrue(usedComponents.FirstOrDefault().Value.AllocatedQuantity == 5);
 
             // Cleanup
-            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test"));
+            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test", ""));
         }
 
         [Test]
@@ -611,7 +611,7 @@ namespace ChargifyDotNetTests
             }
 
             // Cleanup
-            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test"));
+            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test", ""));
         }
 
         [Test]

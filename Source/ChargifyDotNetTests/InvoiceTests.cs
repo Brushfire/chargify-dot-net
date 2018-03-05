@@ -62,7 +62,7 @@ namespace ChargifyDotNetTests
             Assert.IsTrue(result.PaymentCollectionMethod == PaymentCollectionMethod.Invoice);
 
             // Cleanup
-            Assert.IsTrue(Chargify.DeleteSubscription(result.SubscriptionID, "Automatic cancel due to test"));
+            Assert.IsTrue(Chargify.DeleteSubscription(result.SubscriptionID, "Automatic cancel due to test", ""));
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace ChargifyDotNetTests
             Assert.IsTrue(newSubscription.PaymentCollectionMethod == PaymentCollectionMethod.Invoice);
 
             // Cleanup
-            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test"));
+            Assert.IsTrue(Chargify.DeleteSubscription(newSubscription.SubscriptionID, "Automatic cancel due to test", ""));
         }
     }
 }

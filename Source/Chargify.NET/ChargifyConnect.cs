@@ -1331,7 +1331,7 @@ namespace ChargifyNET
         /// <param name="SubscriptionID">The ID of the sucscription</param>
         /// <param name="CancellationMessage">The message to associate with the subscription</param>
         /// <returns></returns>
-        public bool DeleteSubscription(int SubscriptionID, string CancellationMessage)
+        public bool DeleteSubscription(int SubscriptionID, string CancellationMessage, string ReasonCode)
         {
             try
             {
@@ -1345,6 +1345,7 @@ namespace ChargifyNET
                     SubscriptionXML = new StringBuilder(GetXMLStringIfApplicable());
                     SubscriptionXML.Append("<subscription>");
                     SubscriptionXML.AppendFormat("<cancellation_message>{0}</cancellation_message>", CancellationMessage);
+                    SubscriptionXML.AppendFormat("<reason_code>{0}</reason_code>", ReasonCode);
                     SubscriptionXML.Append("</subscription>");
                 }
                 // now make the request

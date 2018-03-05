@@ -702,7 +702,7 @@ namespace ChargifyNET
         /// <param name="SubscriptionID">The ID of the sucscription</param>
         /// <param name="CancellationMessage">The message to associate with the subscription</param>
         /// <returns></returns>
-        bool DeleteSubscription(int SubscriptionID, string CancellationMessage);
+        bool DeleteSubscription(int SubscriptionID, string CancellationMessage, string ReasonCode);
         /// <summary>
         /// Update the product information for an existing subscription
         /// </summary>

@@ -150,6 +150,15 @@ namespace ChargifyNET
                     case "gateway_order_id":
                         _gatewayOrderID = obj.GetJSONContentAsString(key);
                         break;
+                    case "card_number":
+                        _cardNumber = obj.GetJSONContentAsString(key);
+                        break;
+                    case "card_expiration":
+                        _cardExpiration = obj.GetJSONContentAsString(key);
+                        break;
+                    case "card_type":
+                        _cardType = obj.GetJSONContentAsString(key);
+                        break;
                     default:
                         break;
                 }
@@ -208,6 +217,15 @@ namespace ChargifyNET
                         break;
                     case "gateway_order_id":
                         _gatewayOrderID = dataNode.GetNodeContentAsString();
+                        break;
+                    case "card_number":
+                        _cardNumber = dataNode.GetNodeContentAsString();
+                        break;
+                    case "card_expiration":
+                        _cardExpiration = dataNode.GetNodeContentAsString();
+                        break;
+                    case "card_type":
+                        _cardType = dataNode.GetNodeContentAsString();
                         break;
                     default:
                         break;
@@ -368,7 +386,25 @@ namespace ChargifyNET
         {
             get { return _gatewayOrderID; }
         }
-        private string _gatewayOrderID = string.Empty;        
+        private string _gatewayOrderID = string.Empty;
+
+        public string CardNumber
+        {
+            get { return _cardNumber; }
+        }
+        private string _cardNumber = string.Empty;
+
+        public string CardExpiration
+        {
+            get { return _cardExpiration; }
+        }
+        private string _cardExpiration = string.Empty;
+
+        public string CardType
+        {
+            get { return _cardType; }
+        }
+        private string _cardType = string.Empty;
 
         #endregion
 

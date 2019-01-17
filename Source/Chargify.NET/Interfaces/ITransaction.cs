@@ -191,5 +191,11 @@ namespace ChargifyNET
         /// </summary>
         string GatewayOrderID { get; }
 
+        string CardNumber { get; }
+
+        string CardExpiration { get; }
+
+        string CardType { get; }
+
     }
 }

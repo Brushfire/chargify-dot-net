@@ -75,7 +75,11 @@ namespace ChargifyNET
         /// <summary>
         /// A calculated tax charge
         /// </summary>
-        Tax
+        Tax,
+        /// <summary>
+        /// A discount coupon
+        /// </summary>
+        Coupon
     }
 
     /// <summary>
